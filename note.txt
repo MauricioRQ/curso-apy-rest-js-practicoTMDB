@@ -1,0 +1,245 @@
+# curso-apy-rest-js-practicoTMDB
+Curso practico de consumo de API REST con JavaScript - The Movie DataBase
+
+
+# PASOS PARA CREAR LA CONFIGURACION DEL ENTRONO DE DESARROLLO
+
+# GITHUB
+
+    Crear el repositorio:
+        - Nombre
+        - Descripcion
+        - Marcarlo "Publico"
+        - Marcar caja de "Add a README file"
+        - Marcar cajita de "Choose a license" y          seleccionar "License: MT License"
+        - Marcar cajita de Add.gitignore y seleccionar "Node"
+
+        DESPUES
+        Al haber creado el repositorio:
+        - Click en Code (botón verde)
+        - copiar el link del repositorio
+
+# VISUAL STUDIO CODE
+
+    Clonar el repositorio desde la terminal
+        - cd *nombre de la carpeta del proyecto*
+        - git clone *ruta copiada desde github*
+        - cd *nombre del proyecto en github*
+        - code ./ -r (abrir una nueva ventana en VS con ese repositorio)
+        
+        - Crear el index.html, style.css, main.js
+
+        - Crear un archivo secrets.js : Alli irá la APIKEY
+            este archivo lo ocultaremos en el repositorio 
+            incluyendolo en el gitignore asi:
+            en el archivo de gitignore ponemos lo siguiente...
+            #Secrets.js (API KEY)
+            src/secrets.js
+        
+        - recordar importar los archivos .js en el html, sobre todo el de secrets.js que contiene la APYKEY.
+
+# ELEMENTOS - PROPIEDADES 
+
+    LOCATION: 
+        Podemos leer la URL en la que estamos parados, este nos devuelve una serie de propiedades como: hash, host, hostname, y la mas importante la ruta (href).
+
+        Ejemplo: Si escribimos al fin de la URL (#lalala)
+            el hash nos va a retornar lo mismo #lalala, la idea es capturar la ruta para saber donde estamos parados en la app y asi saber que mostrar.
+
+    .onhashchange:
+        este evento nos ayuda a ejecutar cierto codigo cada que cambie el hash
+
+    HASH NAVIGATION:
+
+# OPTIMIZACIÓN Y CONSUMO DE API REST EN FRONTED
+
+    - CACHÉ: La forma en que le decimos al navegador que siempre nos traiga la ultima informacion del backend o de la api, evitando asi nuevas peticiones y sobrecarga en la memoria.
+
+        * CONDICIONALES POR DEFECTO DEL CACHÉ:
+            . Default: 
+            . no-store
+            . reload
+            . no-cache
+            . force-cache
+            . only-if-cached
+        
+    - MEMOIZATION: Guardar los calculos que ya hicimos para no repetirlos, (en arrays u objetos).
+
+        - Crear un objeto
+        - Preguntar si el objeto tiene la info que necesitamos
+        - Si si, usar la info
+        - Si no, hacer el fetch y guardar la info en el objeto
+
+        
+    -COMO REALIZAR UNA PANTALLA DE CARGA CON LOADING SKELETONS
+
+    1- Se crean los elementos en el html: sin valores o imagenes para que solo muestre los divs. con la clase (loading)
+
+        <section id="genericList" class="genericList-container inactive">
+            <div class="movie-container movie-container--loading"></div>
+
+                <div class="movie-container movie-container--loading"></div>
+
+                <div class="movie-container movie-container--loading">
+                <!-- <img
+                src="https://image.tmdb.org/t/p/w300/adOzdWS35KAo21r9R4BuFCkLer6.jpg"
+                class="movie-img"
+                alt="Nombre de la película"
+                /> -->
+
+            </div> 
+        </section>
+    
+    2- Se estiliza el CSS:
+        Resaltando el background que es como queremos que se vean los contenedores en la espera y la animacion, por ultimo le damos un Delay a las apariciones de los elementos.
+
+        .movie-container --loading {
+            background: var(--purple-light-2);
+            border-radius: 8px;
+            height: 225px;
+            min-height: 225px;
+            max-height: 225px;
+            width: 150px;
+            min-width: 15opx;
+            max-width: 150px;
+            margin-bottom: 15px;
+            animation: loading-skeleton infinite 1.5s;
+        }
+
+        /* Animations */
+        Animacion 1seg. opacidad 0 opacidad 50% opacidad 100%
+
+        @keyframes loading-skeleton {
+            0%, 100% {
+                opacity: 100%;
+            }
+
+            50% {
+                opacity: 0%;
+            }
+        }
+
+        /* Delay */
+
+        .movie-container--loading:nth-child(2) {
+            animation-delay: .2s;
+        }
+
+        .movie-container--loading:nth-child(3) {
+            animation-delay: .4s;
+        }
+
+- INTERSECTION OBSERVER
+
+    Permite implementar el lazy loading (carga peresoza de imagenes) , osea las imagenes que necesitamos ver en el momento.
+    tambien se puede usar en el css la propiedad content-visibility: auto; esta propiedad trabaja similarmente en la optimizacion de imagenes y recursos que el lazyLoad.
+
+
+- PAGINACIÓN VS SCROLL INF.
+
+    PAGINACIÓN:
+        . Contenido organizado por pag (distintas URL)
+        . Cantidad fija de elementos por pag es fija
+        . Nav con botones a cada pag
+        . Encontrar contenido esp
+        . Estimar la cantidad de resultados
+        . No es tan adictivo (Scroll infinito YES)
+    
+    SCROLL INFINITO:
+        . Todo el contenido en la msma pag
+        . Cantidad infinita de elementos
+        . Nav por scroll (+ scroll + contenido)
+        . Dificulpa encontrar contenido espfico
+        . Dificulta estimar la cantidad de contenido
+        . Hace setir mal al footer
+        . Es muy adictivo
+        . Scroll > clikcs
+
+    - Herramientas para integrar la actualizacion por scroll inf.
+
+    document.documentElement.scrollTop = Nos dice cuanto scroll se hizo
+    document.documentElement.clientHeight = Nos dice cuanto mide el alto e la pantalla
+    document.documentElement.scrollHeight = Nos dice cuanta es la cantidad de scroll que se puede hacer.
+
+    * El infinite scroll lo necesitamos en 3 secciones, Tendencias, Buscador y en las Categorias.
+    Para aplicar el infinite scroll realizamos lo siguiente:
+
+        . En la seccion de Navegacion creamos Un escuchador de eventos de ecroll donde cargamos a la variable infiniteScroll un valor
+
+            window.addEventListener('scroll', infiniteScroll, false);
+
+        . En la seccion de navagacion, en las funciones donde necesitamos hacer el scroll,(Buscador y en las Categorias) Le damos un valor a la var infiniteScroll.
+
+            infiniteScroll = getPaginatedMoviesByCategory(categoryId);
+
+        Ese valor es una funcion que recibe por parametro el id que necesite, y que retorna una funcion closure que es la que realiza la solicitud a la API.
+
+    # ALMACENAMIENTO LOCAL CON LOCAL STORAGE EN JS
+
+        - LOCAL STORAGE VS API REAL (DB)
+
+        LOCAL STORAGE:
+            . Mas rapido
+            . Depende del navegador
+            . Independiente de una api
+            . Control completo del fronted
+            . No requiere autenticacion
+            . No permite compartir o recuperar sesion
+            . CERO recomendable para datos privados
+
+        API REAL:
+            . Mas lento
+            . Control completo del backend
+            . Requiere autenticacion (Recomendable: OAuth 2.0)
+            . Permite compartir o recuperar sesion
+            . Recomendable para datos 
+            
+    # SECCION PELIS FAVORITAS - LOCAL STORAGE
+
+    El localStorage es como un "Diccionario" en JS, el cual esta dentro de cada maquina, (Almacenamiento local- Persistencia de datos) podemos guardar, recuperar, modificar y borrar info guardada en el.
+
+    Obtener item = localStorage.getItem()
+    Guardar item = localStorage.setItem()
+    Eliminar item = localStorage.removeItem()
+
+    El metodo setItem recive dos valores: ("llave" : "valor")
+            . Guardar item :
+                localStorage.setItem('liked_movies', 'Harry Potter');
+
+            . Obtener item:
+                localStorage.getItem('liked_movies') Res/= 'Harry Potter'
+            
+            . Editar item:
+                localStorage.setItem('liked_movies', '8473628')
+
+    El localStorage no guarda objetos ni arrays.
+    Pero hay Dos herramientas que ayudan a solucionar eso:
+    JSON.parse - JSON.stringify
+
+    . JSON.stringify: Nos permite convertir Obj y arrays a strings
+        ejem: 
+            // objeto
+            const obj = {a: 'a'}
+
+            localStorage.setItem('liked_movies', JSON.stringify(obj))
+
+            localStorage.getItem('liked_movies')
+            '{"a":"a"}'
+
+    . JSON.parse: Nos permite convertir strings a obj o array
+        ejem:
+            JSON.parse(localStorage.getItem('liked_movies'))
+
+            Res/= Objeto
+            {a: 'a'} 
+
+    - APLICACION DEL PROCESO
+
+    En la func. de crearPeli, ponemos un escuchador de eventos de click, el cual cada vez se le de click al boton de fav. va a agregar una clase a cada contenedor, este le agrega los estilos y agrega el id de cada peli al localStorage.
+    
+    movieBtn.addEventListener('click', () => {
+            movieBtn.classList.toggle('movie-btn--liked');
+            // Cargar la peli a local storage
+            likeMovie(movie);
+
+
